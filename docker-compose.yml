@@ -1,8 +1,9 @@
 services:
   dlc-downloader:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
+    # Build manually first (compose can't reference a Dockerfile outside the
+    # compose file's own directory in Container Manager/Portainer stacks):
+    #   docker build -f docker/Dockerfile -t 360dlc:latest .
+    image: 360dlc:latest
     container_name: dlc-downloader
     environment:
       IA_USERNAME: ${IA_USERNAME}
