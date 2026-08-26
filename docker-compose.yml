@@ -1,0 +1,16 @@
+services:
+  dlc-downloader:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: dlc-downloader
+    environment:
+      IA_USERNAME: ${IA_USERNAME}
+      IA_PASSWORD: ${IA_PASSWORD}
+    volumes:
+      - dlc-app:/app
+      - /volume1/downloads:/data   # adjust to the desired NAS output path
+    restart: unless-stopped
+
+volumes:
+  dlc-app:
