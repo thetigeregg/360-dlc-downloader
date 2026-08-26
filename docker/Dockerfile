@@ -23,7 +23,7 @@ RUN pip3 install internetarchive
 RUN git clone https://github.com/thetigeregg/360-dlc-downloader.git /opt/dlc-seed/360-dlc-downloader \
     && chmod +x /opt/dlc-seed/360-dlc-downloader/download_dlc.py
 
-COPY docker/entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Set the working directory for the container
