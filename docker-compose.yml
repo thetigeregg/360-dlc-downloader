@@ -6,8 +6,11 @@ services:
     image: 360dlc:latest
     container_name: dlc-downloader
     environment:
-      IA_USERNAME: ${IA_USERNAME}
-      IA_PASSWORD: ${IA_PASSWORD}
+      IA_USERNAME_FILE: /run/secrets/ia_username
+      IA_PASSWORD_FILE: /run/secrets/ia_password
+    secrets:
+      - ia_username
+      - ia_password
     volumes:
       - dlc-app:/app
       - /volume1/downloads:/data   # adjust to the desired NAS output path
@@ -15,3 +18,16 @@ services:
 
 volumes:
   dlc-app:
+
+# Create these two files on the NAS with the literal username/password as
+# their exact raw content (e.g. via SSH: `printf '%s' 'your-password' >
+# ia_password.txt`, or File Station) - no quoting or `$`-escaping needed.
+# Portainer/Compose environment variables (`environment:`/`env_file:`) run
+# every value through `$VAR`-style interpolation before it reaches the
+# container, which silently corrupts a literal `$` in a password; a
+# file-based secret's content is mounted as-is, with no interpolation.
+secrets:
+  ia_username:
+    file: ./secrets/ia_username.txt
+  ia_password:
+    file: ./secrets/ia_password.txt

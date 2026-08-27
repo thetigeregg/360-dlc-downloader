@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """Download and organize DLC archives from Internet Archive.
 
-Requires `ia`, `aria2c`, and `7z` on PATH. Reads IA_USERNAME/IA_PASSWORD from
-the environment to configure the `ia` CLI if it isn't already configured,
-then uses `ia configure --print-auth-header` to authenticate aria2 downloads.
+Requires `ia`, `aria2c`, and `7z` on PATH. Reads IA_USERNAME/IA_PASSWORD (or
+IA_USERNAME_FILE/IA_PASSWORD_FILE, pointing at files containing the values -
+e.g. Docker Compose file-based secrets, which avoid Compose's `$`
+interpolation of plain environment variable values) to configure the `ia`
+CLI if it isn't already configured, then uses `ia configure
+--print-auth-header` to authenticate aria2 downloads.
 """
 
 import argparse
@@ -16,17 +19,25 @@ from pathlib import Path
 ARCHIVE_EXTENSIONS = (".zip", ".7z")
 
 
+def _credential(name: str) -> str | None:
+    file_path = os.environ.get(f"{name}_FILE")
+    if file_path:
+        return Path(file_path).read_text().strip()
+    return os.environ.get(name)
+
+
 def ensure_ia_configured() -> None:
     check = subprocess.run(["ia", "configure", "--check"], capture_output=True)
     if check.returncode == 0:
         return
 
-    username = os.environ.get("IA_USERNAME")
-    password = os.environ.get("IA_PASSWORD")
+    username = _credential("IA_USERNAME")
+    password = _credential("IA_PASSWORD")
     if not username or not password:
         sys.exit(
-            "ia is not configured and IA_USERNAME/IA_PASSWORD environment "
-            "variables are not set. Set them or run `ia configure` manually."
+            "ia is not configured and IA_USERNAME/IA_PASSWORD (or "
+            "IA_USERNAME_FILE/IA_PASSWORD_FILE) are not set. Set them or "
+            "run `ia configure` manually."
         )
 
     result = subprocess.run(
