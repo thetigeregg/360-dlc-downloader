@@ -26,8 +26,14 @@ volumes:
 # every value through `$VAR`-style interpolation before it reaches the
 # container, which silently corrupts a literal `$` in a password; a
 # file-based secret's content is mounted as-is, with no interpolation.
+#
+# The actual filesystem paths are deployment-specific, so they're not
+# hardcoded here - set IA_USERNAME_FILE_PATH/IA_PASSWORD_FILE_PATH in a
+# local .env file (gitignored) next to this compose file, e.g.:
+#   IA_USERNAME_FILE_PATH=/volume1/path/to/ia_username.txt
+#   IA_PASSWORD_FILE_PATH=/volume1/path/to/ia_password.txt
 secrets:
   ia_username:
-    file: ./secrets/ia_username.txt
+    file: ${IA_USERNAME_FILE_PATH}
   ia_password:
-    file: ./secrets/ia_password.txt
+    file: ${IA_PASSWORD_FILE_PATH}
