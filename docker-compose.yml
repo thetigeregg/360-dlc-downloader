@@ -19,21 +19,19 @@ services:
 volumes:
   dlc-app:
 
-# Create these two files on the NAS with the literal username/password as
-# their exact raw content (e.g. via SSH: `printf '%s' 'your-password' >
-# ia_password.txt`, or File Station) - no quoting or `$`-escaping needed.
-# Portainer/Compose environment variables (`environment:`/`env_file:`) run
-# every value through `$VAR`-style interpolation before it reaches the
-# container, which silently corrupts a literal `$` in a password; a
-# file-based secret's content is mounted as-is, with no interpolation.
+# Create these two files with the literal username/password as their exact
+# raw content (e.g. via SSH: `printf '%s' 'your-password' > ia_password.txt`,
+# or File Station) - no quoting or `$`-escaping needed. Portainer/Compose
+# environment variables (`environment:`/`env_file:`) run every value through
+# `$VAR`-style interpolation before it reaches the container, which silently
+# corrupts a literal `$` in a password; a file-based secret's content is
+# mounted as-is, with no interpolation.
 #
-# The actual filesystem paths are deployment-specific, so they're not
-# hardcoded here - set IA_USERNAME_FILE_PATH/IA_PASSWORD_FILE_PATH in a
-# local .env file (gitignored) next to this compose file, e.g.:
-#   IA_USERNAME_FILE_PATH=/volume1/path/to/ia_username.txt
-#   IA_PASSWORD_FILE_PATH=/volume1/path/to/ia_password.txt
+# Set the two `file:` paths below to wherever you actually put those files
+# on your system (deployment-specific - edit your local copy, don't commit
+# your real paths back to this tracked file).
 secrets:
   ia_username:
-    file: ${IA_USERNAME_FILE_PATH}
+    file: /path/to/ia_username.txt
   ia_password:
-    file: ${IA_PASSWORD_FILE_PATH}
+    file: /path/to/ia_password.txt
