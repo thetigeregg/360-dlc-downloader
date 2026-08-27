@@ -9,6 +9,8 @@ CLI if it isn't already configured, then uses `ia configure
 --print-auth-header` to authenticate aria2 downloads.
 """
 
+from __future__ import annotations
+
 import argparse
 import os
 import subprocess
